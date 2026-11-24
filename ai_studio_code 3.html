@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Payment Tracker 🎓💳</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">🎓</div>
+        <div>
+          <div class="brand-title" id="headerTutorName">Student Payment Tracker</div>
+          <div class="brand-sub">
+            <span id="headerTutorSub">Private Tutoring &amp; Dues Ledger</span>
+            <span class="offline-pill"><span class="offline-dot"></span> Offline Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="month-picker-group" title="Billing Month">
+          <button type="button" class="month-nav-btn" id="prevMonthBtn" aria-label="Previous Month">‹</button>
+          <input type="month" id="billingMonthInput" class="month-input" />
+          <button type="button" class="month-nav-btn" id="nextMonthBtn" aria-label="Next Month">›</button>
+        </div>
+
+        <select id="defaultCurrencySelect" class="header-select" title="Default Currency">
+          <option value="EGP">EGP</option>
+          <option value="USD">USD</option>
+          <option value="SAR">SAR</option>
+          <option value="AED">AED</option>
+          <option value="EUR">EUR</option>
+        </select>
+
+        <button type="button" class="btn btn-melon" id="headerQuickPayBtn">⚡ Fast Payment</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <button type="button" class="nav-tab active" data-tab="dashboard">Dashboard &amp; Dues</button>
+      <button type="button" class="nav-tab" data-tab="payments">Payments Log</button>
+      <button type="button" class="nav-tab" data-tab="students">Student Roster</button>
+      <button type="button" class="nav-tab" data-tab="groups">Groups &amp; Fees</button>
+      <button type="button" class="nav-tab" data-tab="settings">Settings &amp; Export</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-container">
+
+    <!-- DASHBOARD & MONTHLY DUES -->
+    <section id="tab-dashboard" class="tab-panel active">
+      <div class="kpi-grid" id="kpiGrid"></div>
+
+      <div class="gateway-strip" id="gatewayBreakdown"></div>
+
+      <!-- Fast Payment Entry -->
+      <div class="card fast-pay-card" id="fastPayCard">
+        <div class="fast-pay-header">
+          <div class="card-title">⚡ Fast Payment Entry</div>
+          <span class="fast-pay-badge" id="fastPayMonthBadge">Billing: —</span>
+        </div>
+        <div class="card-body">
+          <div id="fastPayEmptyBanner" class="empty-state" style="display:none; padding: 18px;">
+            <div class="empty-state-title">No active students yet</div>
+            <p class="text-muted" style="margin-bottom: 14px;">Create a group and add students to start logging payments, or load sample data to explore.</p>
+            <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-primary btn-sm" id="quickCreateGroupBtn">+ Create Group</button>
+              <button type="button" class="btn btn-melon btn-sm" id="quickLoadDemoBtn">✨ Load Sample Data</button>
+            </div>
+          </div>
+
+          <form id="fastPayForm" class="form-grid">
+            <div class="field-group col-4">
+              <label class="field-label" for="fastPayGroup">1. Group Lookup</label>
+              <select id="fastPayGroup" class="select"></select>
+            </div>
+
+            <div class="field-group col-5">
+              <label class="field-label" for="fastPayStudent">2. Student (Auto-fills Fee)</label>
+              <select id="fastPayStudent" class="select" required></select>
+            </div>
+
+            <div class="field-group col-3">
+              <label class="field-label" for="fastPayAmount">3. Amount Paid</label>
+              <div class="input-with-suffix">
+                <input type="number" id="fastPayAmount" class="input tabular" step="0.01" min="0.01" placeholder="0.00" required />
+                <span class="input-suffix" id="fastPayCurrencyBadge">EGP</span>
+              </div>
+            </div>
+
+            <div class="col-12" id="fastPayStudentInfoWrap" style="display:none;">
+              <div class="student-lookup-info" id="fastPayStudentInfo"></div>
+            </div>
+
+            <div class="field-group col-6">
+              <label class="field-label">4. Payment Gateway</label>
+              <input type="hidden" id="fastPayGateway" value="InstaPay" />
+              <div class="gateway-pills" id="gatewaySelector">
+                <button type="button" class="gateway-pill selected" data-gw="InstaPay">📱 InstaPay</button>
+                <button type="button" class="gateway-pill" data-gw="Vodafone Cash">🔴 Vodafone Cash</button>
+                <button type="button" class="gateway-pill" data-gw="Cash">💵 Cash</button>
+                <button type="button" class="gateway-pill" data-gw="Bank Transfer">🏦 Bank Transfer</button>
+              </div>
+            </div>
+
+            <div class="field-group col-3">
+              <label class="field-label" for="fastPayMonth">Billing Month</label>
+              <input type="month" id="fastPayMonth" class="input" required />
+            </div>
+
+            <div class="field-group col-3">
+              <label class="field-label" for="fastPayDate">Payment Date</label>
+              <input type="date" id="fastPayDate" class="input" required />
+            </div>
+
+            <div class="field-group col-8">
+              <label class="field-label" for="fastPayRef">Transaction Reference / Notes (Optional)</label>
+              <input type="text" id="fastPayRef" class="input" placeholder="e.g., InstaPay Ref #8912 or partial payment note" />
+            </div>
+
+            <div class="field-group col-4" style="justify-content:flex-end;">
+              <button type="submit" class="btn btn-primary" style="width:100%; height:40px;">
+                💳 Log Payment &amp; Issue Receipt
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Monthly Dues Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Monthly Dues Tracker <span class="badge badge-melon" id="duesMonthPill">—</span></div>
+          <div class="filter-bar">
+            <select id="duesGroupFilter" class="select"></select>
+            <select id="duesStatusFilter" class="select">
+              <option value="all">All Statuses</option>
+              <option value="Unpaid">Unpaid</option>
+              <option value="Partial">Partial</option>
+              <option value="Paid">Paid</option>
+            </select>
+            <input type="search" id="duesSearchInput" class="input" placeholder="Search student..." />
+            <button type="button" class="btn btn-outline btn-sm" id="exportDuesCsvBtn">⬇ Dues CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Group &amp; Subject</th>
+                <th class="text-right">Agreed Fee</th>
+                <th class="text-right">Paid</th>
+                <th class="text-right">Balance</th>
+                <th>Status</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="duesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAYMENTS LOG -->
+    <section id="tab-payments" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧾 Payment Transactions</div>
+          <div class="filter-bar">
+            <select id="payMonthFilter" class="select"></select>
+            <select id="payGroupFilter" class="select"></select>
+            <select id="payGatewayFilter" class="select">
+              <option value="all">All Gateways</option>
+              <option value="InstaPay">InstaPay</option>
+              <option value="Vodafone Cash">Vodafone Cash</option>
+              <option value="Cash">Cash</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+            <input type="search" id="paySearchInput" class="input" placeholder="Search name or receipt..." />
+            <button type="button" class="btn btn-outline btn-sm" id="exportPaymentsCsvBtn">⬇ Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Receipt #</th>
+                <th>Date</th>
+                <th>Student &amp; Group</th>
+                <th>Billing Month</th>
+                <th>Gateway</th>
+                <th class="text-right">Amount</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDENT ROSTER -->
+    <section id="tab-students" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">👩‍🎓 Student Roster</div>
+          <div class="filter-bar">
+            <select id="studentGroupFilter" class="select"></select>
+            <input type="search" id="studentSearchInput" class="input" placeholder="Search name or phone..." />
+            <button type="button" class="btn btn-primary" id="addStudentBtn">+ Add Student</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Contact</th>
+                <th>Group</th>
+                <th class="text-right">Monthly Rate</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- GROUPS MANAGEMENT -->
+    <section id="tab-groups" class="tab-panel">
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-header">
+          <div class="card-title">📚 Subject Groups &amp; Standard Monthly Fees</div>
+          <button type="button" class="btn btn-primary" id="addGroupBtn">+ Add Group</button>
+        </div>
+      </div>
+      <div class="groups-grid" id="groupsGrid"></div>
+    </section>
+
+    <!-- SETTINGS & EXPORT -->
+    <section id="tab-settings" class="tab-panel">
+      <div class="settings-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚙️ Tutor &amp; Receipt Profile</div>
+          </div>
+          <div class="card-body">
+            <form id="settingsForm" class="form-grid">
+              <div class="field-group col-12">
+                <label class="field-label" for="setTutorName">Tutor / Academy Name (Shown on Receipts)</label>
+                <input type="text" id="setTutorName" class="input" placeholder="e.g., Mr. Karim Mansour — Math Academy" required />
+              </div>
+              <div class="field-group col-12">
+                <label class="field-label" for="setTutorSub">Subject / Tagline</label>
+                <input type="text" id="setTutorSub" class="input" placeholder="e.g., Private Tutoring & Academic Coaching" />
+              </div>
+              <div class="field-group col-6">
+                <label class="field-label" for="setTutorPhone">Contact Number (Shown on Receipts)</label>
+                <input type="text" id="setTutorPhone" class="input" placeholder="e.g., +20 100 000 0000" />
+              </div>
+              <div class="field-group col-6">
+                <label class="field-label" for="setDefaultCurrency">Default Currency</label>
+                <select id="setDefaultCurrency" class="select">
+                  <option value="EGP">EGP — Egyptian Pound</option>
+                  <option value="USD">USD — US Dollar</option>
+                  <option value="SAR">SAR — Saudi Riyal</option>
+                  <option value="AED">AED — UAE Dirham</option>
+                  <option value="EUR">EUR — Euro</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">💾 Offline Storage, Exports &amp; Backups</div>
+          </div>
+          <div class="card-body">
+            <div class="data-action-row">
+              <div>
+                <div class="font-bold">Export Payments Ledger (CSV)</div>
+                <div class="text-muted">Excel-ready UTF-8 file of all logged transactions.</div>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm" id="btnExportPaymentsCsv">⬇ Payments CSV</button>
+            </div>
+
+            <div class="data-action-row">
+              <div>
+                <div class="font-bold">Export Monthly Dues Report (CSV)</div>
+                <div class="text-muted">Student fee statuses &amp; remaining balances for the selected month.</div>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm" id="btnExportDuesCsv">⬇ Dues CSV</button>
+            </div>
+
+            <div class="data-action-row">
+              <div>
+                <div class="font-bold">Full Offline Backup (JSON)</div>
+                <div class="text-muted">Download groups, students, payments, and settings.</div>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" id="btnExportJson">⬇ Backup JSON</button>
+            </div>
+
+            <div class="data-action-row">
+              <div>
+                <div class="font-bold">Restore from JSON Backup</div>
+                <div class="text-muted">Import a previously saved <code>.json</code> backup file.</div>
+              </div>
+              <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+                ⬆ Import JSON
+                <input type="file" id="importJsonInput" accept=".json,application/json" style="display:none;" />
+              </label>
+            </div>
+
+            <div class="data-action-row">
+              <div>
+                <div class="font-bold">Sample Workspace</div>
+                <div class="text-muted">Populate sample groups, students, and receipts for testing.</div>
+              </div>
+              <button type="button" class="btn btn-melon btn-sm" id="btnLoadDemo">✨ Load Sample Data</button>
+            </div>
+
+            <div class="data-action-row">
+              <div>
+                <div class="font-bold" style="color:var(--danger-text);">Reset All Data</div>
+                <div class="text-muted">Permanently erase all stored data from this browser.</div>
+              </div>
+              <button type="button" class="btn btn-danger btn-sm" id="btnClearAll">🗑 Clear Data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- GROUP MODAL -->
+  <div class="modal-backdrop" id="groupModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title" id="groupModalTitle">Add Group</div>
+        <button type="button" class="modal-close" id="closeGroupModal">&times;</button>
+      </div>
+      <form id="groupForm">
+        <div class="modal-body form-grid">
+          <input type="hidden" id="groupId" />
+          <div class="field-group col-12">
+            <label class="field-label" for="groupName">Group Name</label>
+            <input type="text" id="groupName" class="input" placeholder="e.g., Grade 12 Physics — Sat/Tue" required />
+          </div>
+          <div class="field-group col-12">
+            <label class="field-label" for="groupSubject">Subject Track</label>
+            <input type="text" id="groupSubject" class="input" placeholder="e.g., Physics (Thanawiya Amma)" required />
+          </div>
+          <div class="field-group col-6">
+            <label class="field-label" for="groupFee">Standard Monthly Fee</label>
+            <input type="number" id="groupFee" class="input tabular" step="0.01" min="0" placeholder="500" required />
+          </div>
+          <div class="field-group col-6">
+            <label class="field-label" for="groupCurrency">Currency</label>
+            <select id="groupCurrency" class="select">
+              <option value="EGP">EGP</option>
+              <option value="USD">USD</option>
+              <option value="SAR">SAR</option>
+              <option value="AED">AED</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+          <div class="field-group col-12">
+            <label class="field-label" for="groupSchedule">Schedule / Notes (Optional)</label>
+            <input type="text" id="groupSchedule" class="input" placeholder="e.g., Saturdays & Tuesdays at 5:00 PM" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelGroupModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Group</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- STUDENT MODAL -->
+  <div class="modal-backdrop" id="studentModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title" id="studentModalTitle">Add Student</div>
+        <button type="button" class="modal-close" id="closeStudentModal">&times;</button>
+      </div>
+      <form id="studentForm">
+        <div class="modal-body form-grid">
+          <input type="hidden" id="studentId" />
+          <div class="field-group col-12">
+            <label class="field-label" for="studentName">Student Full Name</label>
+            <input type="text" id="studentName" class="input" placeholder="e.g., Youssef Ahmed" required />
+          </div>
+          <div class="field-group col-6">
+            <label class="field-label" for="studentPhone">Contact Number</label>
+            <input type="text" id="studentPhone" class="input" placeholder="e.g., 01012345678" />
+          </div>
+          <div class="field-group col-6">
+            <label class="field-label" for="studentStatus">Enrollment Status</label>
+            <select id="studentStatus" class="select">
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+            </select>
+          </div>
+          <div class="field-group col-12">
+            <label class="field-label" for="studentGroup">Assigned Group</label>
+            <select id="studentGroup" class="select" required></select>
+            <div class="text-muted" id="studentGroupStandardHint"></div>
+          </div>
+          <div class="field-group col-12">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.86rem; font-weight:600;">
+              <input type="checkbox" id="studentCustomFeeToggle" />
+              Use customized agreed monthly rate (override group standard fee)
+            </label>
+          </div>
+          <div class="field-group col-12" id="studentCustomFeeWrap" style="display:none;">
+            <label class="field-label" for="studentCustomFee">Custom Agreed Monthly Rate</label>
+            <input type="number" id="studentCustomFee" class="input tabular" step="0.01" min="0" placeholder="e.g., 350 or 0 for scholarship" />
+          </div>
+          <div class="field-group col-12">
+            <label class="field-label" for="studentNotes">Parent / Student Notes (Optional)</label>
+            <input type="text" id="studentNotes" class="input" placeholder="e.g., Sibling discount agreed" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelStudentModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- OFFICIAL RECEIPT MODAL -->
+  <div class="modal-backdrop" id="receiptModal">
+    <div class="modal-dialog receipt-dialog">
+      <div class="modal-header no-print">
+        <div class="modal-title">🖨️ Official Payment Receipt</div>
+        <button type="button" class="modal-close" id="closeReceiptModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="receiptPrintableArea"></div>
+      </div>
+      <div class="modal-footer no-print">
+        <button type="button" class="btn btn-outline" id="closeReceiptFooterBtn">Close</button>
+        <button type="button" class="btn btn-primary" id="printReceiptBtn">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Student Payment Tracker 🎓💳
+
+A minimalist offline-first web app for private tutors and teachers to organize student groups, track monthly dues, and log payments.
+
+## 🎨 Color Palette
+- **Cosmic Blue:** `#181A43` (أزرق كوني)
+- **Soft Melon:** `#F0D0B8` (شمام ناعم)
+
+## 🚀 Key Features
+- **Group Management:** Assign subject tracks, schedules, currencies, and standard monthly fees.
+- **Student Roster:** Manage student names, contact numbers, enrollment status, and customized agreed rates.
+- **Fast Payment Entry:** Instant group-to-student lookup with auto-filled monthly fees and remaining balances.
+- **Local Payment Gateways:** Supports InstaPay, Vodafone Cash, Cash, and Bank Transfer.
+- **One-Click Receipts:** Printable official payment slips (`Print / Save as PDF`).
+- **Multi-Currency:** EGP, USD, SAR, AED, and EUR.
+- **Offline Storage & Exports:** Auto-saves to browser `localStorage` with Excel-ready UTF-8 CSV exports and full JSON backup/restore.
+
+## ▶️ How to Run
+1. Keep `index.html`, `styles.css`, and `app.js` in the same folder.
+2. Double-click `index.html` to open it in any web browser (works offline).
